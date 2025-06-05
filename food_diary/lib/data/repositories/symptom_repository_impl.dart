@@ -49,9 +49,8 @@ class SymptomRepositoryImpl implements SymptomRepository {
     DateTime start,
     DateTime end,
   ) async {
-    // not implemented: gather by frequency
-    final freq = await localDataSource.getSymptomsByDate(start);
-    return freq; // placeholder
+    final symptoms = await localDataSource.getSymptomsBetweenDates(start, end);
+    return symptoms;
   }
 
   @override
