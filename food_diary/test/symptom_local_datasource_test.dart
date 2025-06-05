@@ -28,4 +28,4 @@ void main() {
     final result = await dataSource.getSymptomsByDate(DateTime.now());
     expect(result.first.name, 'Test');
   });
-});
+}

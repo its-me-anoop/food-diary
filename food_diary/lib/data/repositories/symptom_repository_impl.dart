@@ -38,18 +38,27 @@ class SymptomRepositoryImpl implements SymptomRepository {
   @override
   Future<Symptom?> getSymptomById(String id) async {
     final list = await localDataSource.getSymptomsByDate(DateTime.now());
-    return list.firstWhere((e) => e.id == id, orElse: () => null);
+    for (final symptom in list) {
+      if (symptom.id == id) return symptom;
+    }
+    return null;
   }
 
   @override
-  Future<List<Symptom>> getSymptomsBetweenDates(DateTime start, DateTime end) async {
+  Future<List<Symptom>> getSymptomsBetweenDates(
+    DateTime start,
+    DateTime end,
+  ) async {
     // not implemented: gather by frequency
     final freq = await localDataSource.getSymptomsByDate(start);
     return freq; // placeholder
   }
 
   @override
-  Future<Map<String, int>> getSymptomFrequency(DateTime start, DateTime end) async {
+  Future<Map<String, int>> getSymptomFrequency(
+    DateTime start,
+    DateTime end,
+  ) async {
     return localDataSource.symptomFrequency(start, end);
   }
 }
