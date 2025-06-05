@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import '../../data/datasources/food_entry_local_datasource.dart';
+import '../../data/datasources/database_provider.dart';
 import '../../data/repositories/food_entry_repository_impl.dart';
 import '../../domain/repositories/food_entry_repository.dart';
 import '../../domain/usecases/add_food_entry.dart';
@@ -18,7 +19,11 @@ import '../../domain/usecases/get_symptom_frequency.dart';
 @module
 abstract class InjectionModule {
   @lazySingleton
-  FoodEntryLocalDataSource get foodEntryLocalDataSource => FoodEntryLocalDataSourceImpl();
+  DatabaseProvider get databaseProvider => DatabaseProvider.instance;
+
+  @lazySingleton
+  FoodEntryLocalDataSource get foodEntryLocalDataSource =>
+      FoodEntryLocalDataSourceImpl(databaseProvider: databaseProvider);
 
   @lazySingleton
   FoodEntryRepository get foodEntryRepository => FoodEntryRepositoryImpl(
@@ -38,7 +43,8 @@ abstract class InjectionModule {
   DeleteFoodEntry get deleteFoodEntry => DeleteFoodEntry(foodEntryRepository);
 
   @lazySingleton
-  SymptomLocalDataSource get symptomLocalDataSource => SymptomLocalDataSourceImpl();
+  SymptomLocalDataSource get symptomLocalDataSource =>
+      SymptomLocalDataSourceImpl(databaseProvider: databaseProvider);
 
   @lazySingleton
   SymptomRepository get symptomRepository => SymptomRepositoryImpl(
