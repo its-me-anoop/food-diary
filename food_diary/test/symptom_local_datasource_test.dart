@@ -28,4 +28,28 @@ void main() {
     final result = await dataSource.getSymptomsByDate(DateTime.now());
     expect(result.first.name, 'Test');
   });
+
+  test('get all symptoms returns every stored symptom', () async {
+    final symptom1 = SymptomModel(
+      id: '1',
+      name: 'One',
+      severity: SeverityLevel.mild,
+      occurredAt: DateTime.now(),
+      potentialTriggerIds: const [],
+    );
+    final symptom2 = SymptomModel(
+      id: '2',
+      name: 'Two',
+      severity: SeverityLevel.moderate,
+      occurredAt: DateTime.now().add(const Duration(days: 1)),
+      potentialTriggerIds: const [],
+    );
+
+    await dataSource.insertSymptom(symptom1);
+    await dataSource.insertSymptom(symptom2);
+
+    final all = await dataSource.getAllSymptoms();
+    expect(all.length, 2);
+    expect(all.map((e) => e.id).toSet(), {'1', '2'});
+  });
 }

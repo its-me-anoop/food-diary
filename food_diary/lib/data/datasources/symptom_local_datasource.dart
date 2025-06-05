@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 import '../models/symptom_model.dart';
 
 abstract class SymptomLocalDataSource {
+  Future<List<SymptomModel>> getAllSymptoms();
   Future<List<SymptomModel>> getSymptomsByDate(DateTime date);
   Future<void> insertSymptom(SymptomModel symptom);
   Future<void> updateSymptom(SymptomModel symptom);
@@ -56,6 +57,13 @@ class SymptomLocalDataSourceImpl implements SymptomLocalDataSource {
       await db.execute('DROP TABLE IF EXISTS $_tableName');
       await _onCreate(db, newVersion);
     }
+  }
+
+  @override
+  Future<List<SymptomModel>> getAllSymptoms() async {
+    final db = await database;
+    final maps = await db.query(_tableName);
+    return maps.map((e) => SymptomModel.fromJson(_deserialize(e))).toList();
   }
 
   @override

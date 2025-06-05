@@ -32,7 +32,7 @@ class SymptomRepositoryImpl implements SymptomRepository {
 
   @override
   Future<List<Symptom>> getAllSymptoms() async {
-    return localDataSource.getSymptomsByDate(DateTime.now());
+    return localDataSource.getAllSymptoms();
   }
 
   @override
