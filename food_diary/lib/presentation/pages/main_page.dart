@@ -56,13 +56,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _fabScaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fabAnimationController,
-      curve: Curves.easeOutBack,
-    ));
+    _fabScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _fabAnimationController,
+        curve: Curves.easeOutBack,
+      ),
+    );
     _fabAnimationController.forward();
   }
 
@@ -117,40 +116,42 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Widget _buildFloatingActionButton() {
     if (_selectedIndex == 0) {
-      return FloatingActionButton.extended(
+      return FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BlocProvider.value(
-                value: _foodEntryBloc,
-                child: AddFoodEntryPage(selectedDate: DateTime.now()),
-              ),
+              builder:
+                  (context) => BlocProvider.value(
+                    value: _foodEntryBloc,
+                    child: AddFoodEntryPage(selectedDate: DateTime.now()),
+                  ),
             ),
           );
         },
-        backgroundColor: AppTheme.primaryColor,
-        icon: const Icon(Icons.add, size: 28),
-        label: const Text('Add Meal'),
-        elevation: 4,
+        backgroundColor: const Color(0xFF4F46E5),
+        foregroundColor: Colors.white,
+        tooltip: 'Add Meal',
+        child: const Icon(Icons.add, size: 28),
       );
     } else if (_selectedIndex == 1) {
-      return FloatingActionButton.extended(
+      return FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BlocProvider.value(
-                value: _symptomBloc,
-                child: AddSymptomPage(selectedDate: DateTime.now()),
-              ),
+              builder:
+                  (context) => BlocProvider.value(
+                    value: _symptomBloc,
+                    child: AddSymptomPage(selectedDate: DateTime.now()),
+                  ),
             ),
           );
         },
-        backgroundColor: AppTheme.warningColor,
-        icon: const Icon(Icons.add_alert, size: 28),
-        label: const Text('Log Symptom'),
-        elevation: 4,
+        backgroundColor: const Color(0xFFB91C1C),
+        foregroundColor: Colors.white,
+        tooltip: 'Log Symptom',
+        child: const Icon(Icons.add_alert, size: 28),
       );
     }
     return const SizedBox.shrink();
@@ -210,15 +211,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
-                    color: isSelected ? color.withOpacity(0.1) : Colors.transparent,
+                    color:
+                        isSelected
+                            ? color.withOpacity(0.1)
+                            : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: const EdgeInsets.all(2),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 18,
-                  ),
+                  child: Icon(icon, color: color, size: 18),
                 ),
               ),
               Flexible(
@@ -230,7 +230,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     style: TextStyle(
                       color: color,
                       fontSize: 8,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.normal,
                     ),
                   ),
                 ),
