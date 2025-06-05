@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../theme/app_theme.dart';
 import '../widgets/animated_symptom_card.dart';
 import '../../domain/entities/symptom.dart';
+import '../blocs/symptom/symptom_bloc.dart';
+import '../blocs/symptom/symptom_event.dart';
+import '../blocs/symptom/symptom_state.dart';
 
 class SymptomsPage extends StatefulWidget {
   const SymptomsPage({super.key});
@@ -16,26 +20,7 @@ class _SymptomsPageState extends State<SymptomsPage>
     with SingleTickerProviderStateMixin {
   DateTime selectedDate = DateTime.now();
   late AnimationController _animationController;
-  
-  // Mock data - replace with BLoC
-  final List<Symptom> symptoms = [
-    Symptom(
-      id: '1',
-      name: 'Skin rash',
-      severity: SeverityLevel.moderate,
-      occurredAt: DateTime.now().subtract(const Duration(hours: 2)),
-      notes: 'Started after lunch, itchy on arms',
-      potentialTriggerIds: ['food1', 'food2'],
-    ),
-    Symptom(
-      id: '2',
-      name: 'Stomach pain',
-      severity: SeverityLevel.mild,
-      occurredAt: DateTime.now().subtract(const Duration(hours: 5)),
-      notes: 'Mild discomfort',
-      potentialTriggerIds: ['food3'],
-    ),
-  ];
+  late SymptomBloc _symptomBloc;
 
   @override
   void initState() {
@@ -45,6 +30,13 @@ class _SymptomsPageState extends State<SymptomsPage>
       vsync: this,
     );
     _animationController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _symptomBloc = context.read<SymptomBloc>();
+    _symptomBloc.add(LoadSymptomsByDate(selectedDate));
   }
 
   @override
@@ -206,13 +198,22 @@ class _SymptomsPageState extends State<SymptomsPage>
   }
 
   Widget _buildSymptomsList() {
-    if (symptoms.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.check_circle_outline,
+    return BlocBuilder<SymptomBloc, SymptomState>(
+      builder: (context, state) {
+        if (state is SymptomLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        List<Symptom> list = [];
+        if (state is SymptomLoaded) {
+          list = state.symptoms;
+        }
+        if (list.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
               size: 64,
               color: Colors.grey.shade300,
             ),
@@ -255,9 +256,36 @@ class _SymptomsPageState extends State<SymptomsPage>
                 ),
               ),
             ),
+              ],
+            ),
           );
-        },
-      ),
+        }
+
+        return AnimationLimiter(
+          child: ListView.builder(
+            padding: const EdgeInsets.only(bottom: 100),
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 375),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: AnimatedSymptomCard(
+                      symptom: list[index],
+                      onEdit: () {},
+                      onDelete: () {
+                        _symptomBloc.add(DeleteSymptomEvent(list[index].id));
+                      },
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -265,6 +293,7 @@ class _SymptomsPageState extends State<SymptomsPage>
     setState(() {
       selectedDate = selectedDate.add(Duration(days: days));
     });
+    _symptomBloc.add(LoadSymptomsByDate(selectedDate));
   }
 
   Future<void> _selectDate() async {
@@ -288,6 +317,7 @@ class _SymptomsPageState extends State<SymptomsPage>
       setState(() {
         selectedDate = picked;
       });
+      _symptomBloc.add(LoadSymptomsByDate(selectedDate));
     }
   }
 }
