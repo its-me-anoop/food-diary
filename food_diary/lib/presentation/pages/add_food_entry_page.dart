@@ -246,7 +246,7 @@ class _AddFoodEntryPageState extends State<AddFoodEntryPage> {
                     _ingredients.remove(ingredient);
                   });
                 },
-                backgroundColor: Colors.grey.shade100,
+                backgroundColor: Colors.grey.shade200,
               );
             }).toList(),
           ),
@@ -283,10 +283,10 @@ class _AddFoodEntryPageState extends State<AddFoodEntryPage> {
                   }
                 });
               },
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.grey.shade100,
               selectedColor: tag.toLowerCase().contains('contains')
-                  ? AppTheme.warningColor.withOpacity(0.2)
-                  : AppTheme.primaryColor.withOpacity(0.2),
+                  ? AppTheme.warningColor.withOpacity(0.3)
+                  : AppTheme.primaryColor.withOpacity(0.3),
               checkmarkColor: tag.toLowerCase().contains('contains')
                   ? AppTheme.warningColor
                   : AppTheme.primaryColor,
@@ -295,7 +295,7 @@ class _AddFoodEntryPageState extends State<AddFoodEntryPage> {
                     ? (tag.toLowerCase().contains('contains')
                         ? AppTheme.warningColor
                         : AppTheme.primaryColor)
-                    : Colors.grey.shade300,
+                    : Colors.grey.shade400,
               ),
             );
           }).toList(),
