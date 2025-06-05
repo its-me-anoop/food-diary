@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'database_provider.dart';
 import '../models/food_entry_model.dart';
 
 abstract class FoodEntryLocalDataSource {
@@ -14,72 +14,13 @@ abstract class FoodEntryLocalDataSource {
 }
 
 class FoodEntryLocalDataSourceImpl implements FoodEntryLocalDataSource {
-  static const String _databaseName = 'food_diary.db';
   static const String _tableName = 'food_entries';
-  static const int _databaseVersion = 2;
 
-  Database? _database;
+  final DatabaseProvider databaseProvider;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
-    return _database!;
-  }
+  FoodEntryLocalDataSourceImpl({required this.databaseProvider});
 
-  Future<Database> _initDatabase() async {
-    final String path = join(await getDatabasesPath(), _databaseName);
-    return await openDatabase(
-      path,
-      version: _databaseVersion,
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
-    );
-  }
-
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE $_tableName (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        ingredients TEXT NOT NULL,
-        dateTime TEXT NOT NULL,
-        notes TEXT,
-        mealType INTEGER NOT NULL,
-        tags TEXT NOT NULL
-      )
-    ''');
-  }
-
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      // Migration from version 1 to 2
-      // Create a new table with the new schema
-      await db.execute('''
-        CREATE TABLE ${_tableName}_new (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          ingredients TEXT NOT NULL,
-          dateTime TEXT NOT NULL,
-          notes TEXT,
-          mealType INTEGER NOT NULL,
-          tags TEXT NOT NULL
-        )
-      ''');
-      
-      // Copy data from old table to new table with default values for new columns
-      await db.execute('''
-        INSERT INTO ${_tableName}_new (id, name, ingredients, dateTime, notes, mealType, tags)
-        SELECT id, name, '[]', dateTime, notes, mealType, '[]'
-        FROM $_tableName
-      ''');
-      
-      // Drop the old table
-      await db.execute('DROP TABLE $_tableName');
-      
-      // Rename the new table to the original name
-      await db.execute('ALTER TABLE ${_tableName}_new RENAME TO $_tableName');
-    }
-  }
+  Future<Database> get database => databaseProvider.database;
 
   @override
   Future<List<FoodEntryModel>> getAllEntries() async {

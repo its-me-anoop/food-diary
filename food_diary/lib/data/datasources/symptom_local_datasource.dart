@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'database_provider.dart';
 import '../models/symptom_model.dart';
 
 abstract class SymptomLocalDataSource {
@@ -12,51 +12,13 @@ abstract class SymptomLocalDataSource {
 }
 
 class SymptomLocalDataSourceImpl implements SymptomLocalDataSource {
-  static const _dbName = 'food_diary.db';
   static const _tableName = 'symptoms';
-  static const _version = 2;
 
-  Database? _database;
+  final DatabaseProvider databaseProvider;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
-    return _database!;
-  }
+  SymptomLocalDataSourceImpl({required this.databaseProvider});
 
-  Future<Database> _initDatabase() async {
-    final path = join(await getDatabasesPath(), _dbName);
-    return openDatabase(
-      path,
-      version: _version,
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
-    );
-  }
-
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE $_tableName(
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        severity INTEGER NOT NULL,
-        occurredAt TEXT NOT NULL,
-        notes TEXT,
-        potentialTriggerIds TEXT NOT NULL
-      )
-    ''');
-  }
-
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      // Recreate the table for the new schema. The previous implementation
-      // attempted to call `_onCreate` directly which would fail if the table
-      // already existed. Dropping the old table first avoids the "table already
-      // exists" error when migrating from older versions.
-      await db.execute('DROP TABLE IF EXISTS $_tableName');
-      await _onCreate(db, newVersion);
-    }
-  }
+  Future<Database> get database => databaseProvider.database;
 
   @override
   Future<List<SymptomModel>> getSymptomsByDate(DateTime date) async {

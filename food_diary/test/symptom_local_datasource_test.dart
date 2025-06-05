@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:food_diary/data/datasources/database_provider.dart';
 import 'package:food_diary/data/datasources/symptom_local_datasource.dart';
 import 'package:food_diary/domain/entities/symptom.dart';
 import 'package:food_diary/data/models/symptom_model.dart';
@@ -10,8 +11,11 @@ void main() {
 
   late SymptomLocalDataSource dataSource;
 
-  setUp(() {
-    dataSource = SymptomLocalDataSourceImpl();
+  setUp(() async {
+    await DatabaseProvider.instance.database;
+    dataSource = SymptomLocalDataSourceImpl(
+      databaseProvider: DatabaseProvider.instance,
+    );
   });
 
   test('insert and retrieve symptom', () async {
