@@ -54,9 +54,7 @@ class _SymptomsPageState extends State<SymptomsPage>
             _buildHeader(),
             _buildDateSelector(),
             _buildSeverityFilter(),
-            Expanded(
-              child: _buildSymptomsList(),
-            ),
+            Expanded(child: _buildSymptomsList()),
           ],
         ),
       ),
@@ -74,16 +72,13 @@ class _SymptomsPageState extends State<SymptomsPage>
               Text(
                 'Symptom Tracker',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 'Monitor your reactions',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
               ),
             ],
           ),
@@ -113,9 +108,7 @@ class _SymptomsPageState extends State<SymptomsPage>
           IconButton(
             icon: const Icon(Icons.chevron_left),
             onPressed: () => _changeDate(-1),
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.grey.shade100,
-            ),
+            style: IconButton.styleFrom(backgroundColor: Colors.grey.shade100),
           ),
           GestureDetector(
             onTap: _selectDate,
@@ -134,9 +127,7 @@ class _SymptomsPageState extends State<SymptomsPage>
           IconButton(
             icon: const Icon(Icons.chevron_right),
             onPressed: () => _changeDate(1),
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.grey.shade100,
-            ),
+            style: IconButton.styleFrom(backgroundColor: Colors.grey.shade100),
           ),
         ],
       ),
@@ -189,10 +180,7 @@ class _SymptomsPageState extends State<SymptomsPage>
       avatar: Container(
         width: 12,
         height: 12,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
       ),
     );
   }
@@ -203,59 +191,32 @@ class _SymptomsPageState extends State<SymptomsPage>
         if (state is SymptomLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        List<Symptom> list = [];
+
+        List<Symptom> symptoms = [];
         if (state is SymptomLoaded) {
-          list = state.symptoms;
+          symptoms = state.symptoms;
         }
-        if (list.isEmpty) {
+
+        if (symptoms.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.check_circle_outline,
-              size: 64,
-              color: Colors.grey.shade300,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No symptoms recorded today',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'That\'s great news!',
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return AnimationLimiter(
-      child: ListView.builder(
-        padding: const EdgeInsets.only(bottom: 100),
-        itemCount: symptoms.length,
-        itemBuilder: (context, index) {
-          return AnimationConfiguration.staggeredList(
-            position: index,
-            duration: const Duration(milliseconds: 375),
-            child: SlideAnimation(
-              verticalOffset: 50.0,
-              child: FadeInAnimation(
-                child: AnimatedSymptomCard(
-                  symptom: symptoms[index],
-                  onEdit: () {},
-                  onDelete: () {},
+                  size: 64,
+                  color: Colors.grey.shade300,
                 ),
-              ),
-            ),
+                const SizedBox(height: 16),
+                Text(
+                  'No symptoms recorded today',
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "That's great news!",
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+                ),
               ],
             ),
           );
@@ -264,8 +225,9 @@ class _SymptomsPageState extends State<SymptomsPage>
         return AnimationLimiter(
           child: ListView.builder(
             padding: const EdgeInsets.only(bottom: 100),
-            itemCount: list.length,
+            itemCount: symptoms.length,
             itemBuilder: (context, index) {
+              final symptom = symptoms[index];
               return AnimationConfiguration.staggeredList(
                 position: index,
                 duration: const Duration(milliseconds: 375),
@@ -273,10 +235,10 @@ class _SymptomsPageState extends State<SymptomsPage>
                   verticalOffset: 50.0,
                   child: FadeInAnimation(
                     child: AnimatedSymptomCard(
-                      symptom: list[index],
+                      symptom: symptom,
                       onEdit: () {},
                       onDelete: () {
-                        _symptomBloc.add(DeleteSymptomEvent(list[index].id));
+                        _symptomBloc.add(DeleteSymptomEvent(symptom.id));
                       },
                     ),
                   ),
@@ -305,9 +267,7 @@ class _SymptomsPageState extends State<SymptomsPage>
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppTheme.primaryColor,
-            ),
+            colorScheme: ColorScheme.light(primary: AppTheme.primaryColor),
           ),
           child: child!,
         );
