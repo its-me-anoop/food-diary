@@ -5,6 +5,10 @@ import '../models/symptom_model.dart';
 
 abstract class SymptomLocalDataSource {
   Future<List<SymptomModel>> getSymptomsByDate(DateTime date);
+  Future<List<SymptomModel>> getSymptomsBetweenDates(
+    DateTime start,
+    DateTime end,
+  );
   Future<void> insertSymptom(SymptomModel symptom);
   Future<void> updateSymptom(SymptomModel symptom);
   Future<void> deleteSymptom(String id);
@@ -74,6 +78,21 @@ class SymptomLocalDataSourceImpl implements SymptomLocalDataSource {
   }
 
   @override
+  Future<List<SymptomModel>> getSymptomsBetweenDates(
+    DateTime start,
+    DateTime end,
+  ) async {
+    final db = await database;
+    final maps = await db.query(
+      _tableName,
+      where: 'occurredAt >= ? AND occurredAt <= ?',
+      whereArgs: [start.toIso8601String(), end.toIso8601String()],
+    );
+
+    return maps.map((e) => SymptomModel.fromJson(_deserialize(e))).toList();
+  }
+
+  @override
   Future<void> insertSymptom(SymptomModel symptom) async {
     final db = await database;
     await db.insert(
@@ -108,13 +127,17 @@ class SymptomLocalDataSourceImpl implements SymptomLocalDataSource {
 
   Map<String, dynamic> _deserialize(Map<String, dynamic> data) {
     final map = Map<String, dynamic>.from(data);
-    map['potentialTriggerIds'] =
-        jsonDecode(data['potentialTriggerIds'] ?? '[]');
+    map['potentialTriggerIds'] = jsonDecode(
+      data['potentialTriggerIds'] ?? '[]',
+    );
     return map;
   }
 
   @override
-  Future<Map<String, int>> symptomFrequency(DateTime start, DateTime end) async {
+  Future<Map<String, int>> symptomFrequency(
+    DateTime start,
+    DateTime end,
+  ) async {
     final db = await database;
     final maps = await db.query(
       _tableName,
