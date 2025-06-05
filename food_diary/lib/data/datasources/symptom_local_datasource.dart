@@ -49,6 +49,11 @@ class SymptomLocalDataSourceImpl implements SymptomLocalDataSource {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
+      // Recreate the table for the new schema. The previous implementation
+      // attempted to call `_onCreate` directly which would fail if the table
+      // already existed. Dropping the old table first avoids the "table already
+      // exists" error when migrating from older versions.
+      await db.execute('DROP TABLE IF EXISTS $_tableName');
       await _onCreate(db, newVersion);
     }
   }
