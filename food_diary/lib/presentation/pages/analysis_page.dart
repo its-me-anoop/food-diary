@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../theme/app_theme.dart';
+import '../../core/injection/injection.dart';
+import '../../domain/usecases/get_symptom_frequency.dart';
 
 class AnalysisPage extends StatefulWidget {
   const AnalysisPage({super.key});
@@ -16,14 +18,7 @@ class _AnalysisPageState extends State<AnalysisPage>
   
   String selectedTimeRange = '7 days';
   
-  // Mock data
-  final Map<String, int> topTriggers = {
-    'Dairy': 12,
-    'Gluten': 8,
-    'Nuts': 6,
-    'Eggs': 4,
-    'Shellfish': 2,
-  };
+  Map<String, int> topTriggers = const {};
 
   @override
   void initState() {
@@ -40,6 +35,17 @@ class _AnalysisPageState extends State<AnalysisPage>
       curve: Curves.easeIn,
     ));
     _animationController.forward();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final usecase = getIt<GetSymptomFrequency>();
+    final end = DateTime.now();
+    final start = end.subtract(const Duration(days: 7));
+    final data = await usecase(start, end);
+    setState(() {
+      topTriggers = data;
+    });
   }
 
   @override
@@ -263,6 +269,8 @@ class _AnalysisPageState extends State<AnalysisPage>
             ),
           ),
           const SizedBox(height: 16),
+          if (topTriggers.isEmpty)
+            const Text('No data yet'),
           ...topTriggers.entries.map((entry) {
             final maxCount = topTriggers.values.reduce((a, b) => a > b ? a : b);
             final percentage = (entry.value / maxCount).clamp(0.0, 1.0);

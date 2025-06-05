@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animations/animations.dart';
 import '../theme/app_theme.dart';
 import '../blocs/food_entry/food_entry_bloc.dart';
+import '../blocs/symptom/symptom_bloc.dart';
 import 'home_page.dart';
 import 'symptoms_page.dart';
 import 'analysis_page.dart';
 import 'profile_page.dart';
 import 'add_food_entry_page.dart';
+import 'add_symptom_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -21,6 +23,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late AnimationController _fabAnimationController;
   late Animation<double> _fabScaleAnimation;
   late FoodEntryBloc _foodEntryBloc;
+  late SymptomBloc _symptomBloc;
 
   Widget _buildCurrentPage() {
     switch (_selectedIndex) {
@@ -30,7 +33,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           child: const HomePage(),
         );
       case 1:
-        return const SymptomsPage();
+        return BlocProvider.value(
+          value: _symptomBloc,
+          child: const SymptomsPage(),
+        );
       case 2:
         return const AnalysisPage();
       case 3:
@@ -64,6 +70,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _foodEntryBloc = context.read<FoodEntryBloc>();
+    _symptomBloc = context.read<SymptomBloc>();
   }
 
   @override
@@ -130,8 +137,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     } else if (_selectedIndex == 1) {
       return FloatingActionButton.extended(
         onPressed: () {
-          // Navigate to add symptom
-          Navigator.pushNamed(context, '/add-symptom');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BlocProvider.value(
+                value: _symptomBloc,
+                child: AddSymptomPage(selectedDate: DateTime.now()),
+              ),
+            ),
+          );
         },
         backgroundColor: AppTheme.warningColor,
         icon: const Icon(Icons.add_alert, size: 28),

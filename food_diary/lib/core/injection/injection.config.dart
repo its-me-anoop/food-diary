@@ -18,6 +18,14 @@ import 'package:food_diary/domain/usecases/add_food_entry.dart' as _i67;
 import 'package:food_diary/domain/usecases/delete_food_entry.dart' as _i723;
 import 'package:food_diary/domain/usecases/get_entries_by_date.dart' as _i758;
 import 'package:food_diary/domain/usecases/update_food_entry.dart' as _i189;
+import 'package:food_diary/data/datasources/symptom_local_datasource.dart' as _i200;
+import 'package:food_diary/domain/repositories/symptom_repository.dart' as _i201;
+import 'package:food_diary/domain/usecases/add_symptom.dart' as _i202;
+import 'package:food_diary/domain/usecases/update_symptom.dart' as _i203;
+import 'package:food_diary/domain/usecases/delete_symptom.dart' as _i204;
+import 'package:food_diary/domain/usecases/get_symptoms_by_date.dart' as _i205;
+import 'package:food_diary/domain/usecases/get_symptom_frequency.dart' as _i206;
+import 'package:food_diary/data/repositories/symptom_repository_impl.dart' as _i207;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -44,6 +52,27 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i723.DeleteFoodEntry>(
       () => injectionModule.deleteFoodEntry,
+    );
+    gh.lazySingleton<_i200.SymptomLocalDataSource>(
+      () => injectionModule.symptomLocalDataSource,
+    );
+    gh.lazySingleton<_i201.SymptomRepository>(
+      () => injectionModule.symptomRepository,
+    );
+    gh.lazySingleton<_i205.GetSymptomsByDate>(
+      () => injectionModule.getSymptomsByDate,
+    );
+    gh.lazySingleton<_i202.AddSymptom>(
+      () => injectionModule.addSymptom,
+    );
+    gh.lazySingleton<_i203.UpdateSymptom>(
+      () => injectionModule.updateSymptom,
+    );
+    gh.lazySingleton<_i204.DeleteSymptom>(
+      () => injectionModule.deleteSymptom,
+    );
+    gh.lazySingleton<_i206.GetSymptomFrequency>(
+      () => injectionModule.getSymptomFrequency,
     );
     return this;
   }
