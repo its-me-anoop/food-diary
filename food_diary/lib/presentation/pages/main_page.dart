@@ -148,7 +148,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -196,7 +196,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
-                    color: isSelected ? color.withValues(alpha: 0.1) : Colors.transparent,
+                    color: isSelected ? color.withOpacity(0.1) : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: const EdgeInsets.all(2),

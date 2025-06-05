@@ -96,7 +96,7 @@ class _AnimatedSymptomCardState extends State<AnimatedSymptomCard>
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
                   color: widget.isSelected
-                      ? severityColor.withValues(alpha: 0.1)
+                      ? severityColor.withOpacity(0.1)
                       : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
@@ -107,7 +107,7 @@ class _AnimatedSymptomCardState extends State<AnimatedSymptomCard>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: severityColor.withValues(alpha: 0.1),
+                      color: severityColor.withOpacity(0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -182,7 +182,7 @@ class _AnimatedSymptomCardState extends State<AnimatedSymptomCard>
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(

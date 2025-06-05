@@ -122,7 +122,7 @@ class _AnalysisPageState extends State<AnalysisPage>
                 }
               },
               backgroundColor: Colors.grey.shade100,
-              selectedColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+              selectedColor: AppTheme.primaryColor.withOpacity(0.2),
             ),
           );
         },
@@ -140,7 +140,7 @@ class _AnalysisPageState extends State<AnalysisPage>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -237,7 +237,7 @@ class _AnalysisPageState extends State<AnalysisPage>
                     ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                      color: AppTheme.primaryColor.withOpacity(0.1),
                     ),
                   ),
                 ],
@@ -324,15 +324,15 @@ class _AnalysisPageState extends State<AnalysisPage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.primaryColor.withValues(alpha: 0.1),
-            AppTheme.secondaryColor.withValues(alpha: 0.1),
+            AppTheme.primaryColor.withOpacity(0.1),
+            AppTheme.secondaryColor.withOpacity(0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppTheme.primaryColor.withValues(alpha: 0.2),
+          color: AppTheme.primaryColor.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -381,7 +381,7 @@ class _AnalysisPageState extends State<AnalysisPage>
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withValues(alpha: 0.2),
+            color: AppTheme.primaryColor.withOpacity(0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

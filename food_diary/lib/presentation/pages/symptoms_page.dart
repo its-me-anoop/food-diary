@@ -109,7 +109,7 @@ class _SymptomsPageState extends State<SymptomsPage>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -179,7 +179,7 @@ class _SymptomsPageState extends State<SymptomsPage>
       selected: isSelected,
       onSelected: (selected) {},
       backgroundColor: Colors.grey.shade100,
-      selectedColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+      selectedColor: AppTheme.primaryColor.withOpacity(0.2),
       checkmarkColor: AppTheme.primaryColor,
     );
   }
@@ -193,7 +193,7 @@ class _SymptomsPageState extends State<SymptomsPage>
       ),
       selected: false,
       onSelected: (selected) {},
-      backgroundColor: color.withValues(alpha: 0.1),
+      backgroundColor: color.withOpacity(0.1),
       avatar: Container(
         width: 12,
         height: 12,
