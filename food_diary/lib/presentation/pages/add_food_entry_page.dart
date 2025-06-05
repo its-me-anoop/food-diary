@@ -285,8 +285,8 @@ class _AddFoodEntryPageState extends State<AddFoodEntryPage> {
               },
               backgroundColor: Colors.white,
               selectedColor: tag.toLowerCase().contains('contains')
-                  ? AppTheme.warningColor.withValues(alpha: 0.2)
-                  : AppTheme.primaryColor.withValues(alpha: 0.2),
+                  ? AppTheme.warningColor.withOpacity(0.2)
+                  : AppTheme.primaryColor.withOpacity(0.2),
               checkmarkColor: tag.toLowerCase().contains('contains')
                   ? AppTheme.warningColor
                   : AppTheme.primaryColor,
