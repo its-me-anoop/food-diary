@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/symptom.dart';
+import 'package:intl/intl.dart';
 import '../blocs/symptom/symptom_bloc.dart';
 import '../blocs/symptom/symptom_event.dart';
 import '../theme/app_theme.dart';
@@ -25,6 +26,7 @@ class _AddSymptomPageState extends State<AddSymptomPage> {
   final _notesController = TextEditingController();
   SeverityLevel _severity = SeverityLevel.mild;
   late DateTime _occurredAt;
+  final List<String> _commonSymptoms = SymptomType.common;
 
   @override
   void initState() {
@@ -51,7 +53,9 @@ class _AddSymptomPageState extends State<AddSymptomPage> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: Text(widget.symptomToEdit == null ? 'Add Symptom' : 'Edit Symptom'),
+        title: Text(
+          widget.symptomToEdit == null ? 'Add Symptom' : 'Edit Symptom',
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -60,22 +64,54 @@ class _AddSymptomPageState extends State<AddSymptomPage> {
         child: ListView(
           padding: const EdgeInsets.all(24),
           children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(hintText: 'Symptom name'),
-              validator: (v) => v == null || v.isEmpty ? 'Enter symptom' : null,
+            Autocomplete<String>(
+              optionsBuilder: (text) {
+                if (text.text.isEmpty) return _commonSymptoms;
+                return _commonSymptoms.where(
+                  (s) => s.toLowerCase().contains(text.text.toLowerCase()),
+                );
+              },
+              onSelected: (val) => _nameController.text = val,
+              fieldViewBuilder: (
+                context,
+                controller,
+                focusNode,
+                onFieldSubmitted,
+              ) {
+                controller.text = _nameController.text;
+                return TextFormField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: const InputDecoration(hintText: 'Symptom name'),
+                  validator:
+                      (v) => v == null || v.isEmpty ? 'Enter symptom' : null,
+                  onChanged: (val) => _nameController.text = val,
+                );
+              },
             ),
             const SizedBox(height: 24),
             DropdownButtonFormField<SeverityLevel>(
               value: _severity,
               decoration: const InputDecoration(labelText: 'Severity'),
-              items: SeverityLevel.values
-                  .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e.name),
-                      ))
-                  .toList(),
+              items:
+                  SeverityLevel.values
+                      .map(
+                        (e) => DropdownMenuItem(value: e, child: Text(e.name)),
+                      )
+                      .toList(),
               onChanged: (val) => setState(() => _severity = val!),
+            ),
+            const SizedBox(height: 24),
+            ListTile(
+              tileColor: Colors.grey.shade50,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+              title: const Text('When did it occur?'),
+              subtitle: Text(DateFormat('MMM d, h:mm a').format(_occurredAt)),
+              trailing: const Icon(Icons.schedule),
+              onTap: _pickDateTime,
             ),
             const SizedBox(height: 24),
             TextFormField(
@@ -115,6 +151,40 @@ class _AddSymptomPageState extends State<AddSymptomPage> {
         bloc.add(UpdateSymptomEvent(symptom));
       }
       Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _pickDateTime() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _occurredAt,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(primary: AppTheme.primaryColor),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (date != null) {
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(_occurredAt),
+      );
+      if (time != null && mounted) {
+        setState(() {
+          _occurredAt = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute,
+          );
+        });
+      }
     }
   }
 }

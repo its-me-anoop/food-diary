@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../theme/app_theme.dart';
 import '../widgets/animated_symptom_card.dart';
 import '../../domain/entities/symptom.dart';
+import 'add_symptom_page.dart';
 import '../blocs/symptom/symptom_bloc.dart';
 import '../blocs/symptom/symptom_event.dart';
 import '../blocs/symptom/symptom_state.dart';
@@ -236,10 +237,8 @@ class _SymptomsPageState extends State<SymptomsPage>
                   child: FadeInAnimation(
                     child: AnimatedSymptomCard(
                       symptom: symptom,
-                      onEdit: () {},
-                      onDelete: () {
-                        _symptomBloc.add(DeleteSymptomEvent(symptom.id));
-                      },
+                      onEdit: () => _navigateToEditSymptom(context, symptom),
+                      onDelete: () => _deleteSymptom(context, symptom.id),
                     ),
                   ),
                 ),
@@ -279,5 +278,47 @@ class _SymptomsPageState extends State<SymptomsPage>
       });
       _symptomBloc.add(LoadSymptomsByDate(selectedDate));
     }
+  }
+
+  void _navigateToEditSymptom(BuildContext context, Symptom symptom) {
+    final bloc = context.read<SymptomBloc>();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => BlocProvider.value(
+              value: bloc,
+              child: AddSymptomPage(
+                selectedDate: selectedDate,
+                symptomToEdit: symptom,
+              ),
+            ),
+      ),
+    );
+  }
+
+  void _deleteSymptom(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Delete Symptom'),
+            content: const Text(
+              'Are you sure you want to delete this symptom?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  _symptomBloc.add(DeleteSymptomEvent(id));
+                  Navigator.of(ctx).pop();
+                },
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+    );
   }
 }
