@@ -273,6 +273,13 @@ class _AddFoodEntryPageState extends State<AddFoodEntryPage> {
             final isSelected = _tags.contains(tag);
             return FilterChip(
               label: Text(tag),
+              labelStyle: TextStyle(
+                color: isSelected
+                    ? (tag.toLowerCase().contains('contains')
+                        ? AppTheme.warningColor
+                        : AppTheme.primaryColor)
+                    : Colors.black,
+              ),
               selected: isSelected,
               onSelected: (selected) {
                 setState(() {
