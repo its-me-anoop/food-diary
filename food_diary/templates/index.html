@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<a href="{{ url_for('main.add_entry') }}">Add Entry</a>
+<ul>
+  {% for entry in entries %}
+    <li>{{ entry.timestamp.strftime('%Y-%m-%d %H:%M') }}: {{ entry.food }} - {{ entry.calories }} cal</li>
+  {% else %}
+    <li>No entries yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

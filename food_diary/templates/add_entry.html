@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post">
+  <label>Food:<input type="text" name="food" required></label><br>
+  <label>Calories:<input type="number" name="calories" required></label><br>
+  <button type="submit">Save</button>
+</form>
+{% endblock %}
